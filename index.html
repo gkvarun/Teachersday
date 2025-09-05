@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Teachers' Day Pixel Web Card</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Pixel Font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background: #25225f;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Press Start 2P', Arial, monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #1b182f;
+      border: 8px solid #5b41dd;
+      border-radius: 0;
+      outline: 8px solid #312963;
+      width: 420px;
+      padding: 32px 20px 22px 20px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 0 6px #ffd667, 0 0 0 16px #25225f, 0 0 32px #312963;
+      overflow: hidden;
+    }
+    .pixel-confetti {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    h1 {
+      color: #ffd667;
+      font-size: 1.27em;
+      margin-bottom: 21px;
+      letter-spacing: 2px;
+      font-family: 'Press Start 2P', Arial, monospace;
+      text-shadow: 0 3px #5b41dd, 2px 0 #ffd667, 3px 3px #25225f;
+      z-index: 2;
+    }
+    .note {
+      color: #f3e7ce;
+      font-size: 0.83em;
+      line-height: 1.72;
+      letter-spacing: 1px;
+      font-family: 'Press Start 2P', Arial, monospace;
+      min-height: 160px;
+      margin-bottom: 22px;
+      text-shadow: 1px 1px #25225f, 2px 2px #5b41dd;
+      z-index: 2;
+    }
+    .pixel-teacher {
+      margin: 14px auto 0;
+      width: 76px;
+      image-rendering: pixelated;
+      display: block;
+    }
+    .footer {
+      color: #ffd667;
+      font-size: 0.85em;
+      letter-spacing: 1px;
+      margin-top: 20px;
+      font-family: 'Press Start 2P', Arial, monospace;
+      text-shadow: 1px 2px #5b41dd;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <canvas class="pixel-confetti"></canvas>
+    <h1>HAPPY TEACHERS' DAY!</h1>
+    <div class="note" id="note"></div>
+    <!-- Pixel Teacher SVG -->
+    <svg class="pixel-teacher" viewBox="0 0 32 32">
+      <rect x="12" y="2" width="8" height="8" fill="#ffe7ba" stroke="#000" stroke-width="1"/>
+      <rect x="9" y="10" width="14" height="10" fill="#88cdf1" stroke="#000" stroke-width="1"/>
+      <rect x="10" y="20" width="2" height="7" fill="#ffd667" stroke="#000" stroke-width="1"/>
+      <rect x="20" y="20" width="2" height="7" fill="#ffd667" stroke="#000" stroke-width="1"/>
+      <rect x="15" y="5" width="2" height="2" fill="#fff" />
+      <!-- Face details -->
+      <rect x="14" y="7" width="1" height="1" fill="#000" />
+      <rect x="17" y="7" width="1" height="1" fill="#000" />
+      <rect x="13" y="9" width="6" height="1" fill="#d19044"/>
+    </svg>
+    <div class="footer">THANK YOU FOR INSPIRING US!</div>
+  </div>
+  <script>
+    // Pixel-style animated note (letter by letter)
+    const note = "DEAR TEACHER,\n\nYOUR PATIENCE, WISDOM AND KINDNESS HAVE MADE A LASTING IMPACT ON OUR LIVES. THANK YOU FOR BELIEVING IN US, GUIDING US THROUGH EVERY CHALLENGE, AND MAKING LEARNING FUN. TODAY WE CELEBRATE YOU AS A MENTOR AND FRIEND. MAY YOUR DAYS BE FILLED WITH THE HAPPINESS YOU GIVE SO MANY STUDENTS.\n\nWITH GRATITUDE,\nYOUR STUDENTS";
+    const noteDiv = document.getElementById('note');
+    let i = 0, speed = 20;
+    function typeNote() {
+      if (i < note.length) {
+        noteDiv.innerHTML += note[i] === "\n" ? "<br/>" : note[i];
+        i++;
+        setTimeout(typeNote, note[i-1] === '.' ? 110 : speed);
+      }
+    }
+    setTimeout(typeNote, 800);
+
+    // Pixel confetti!
+    const canvas = document.querySelector('.pixel-confetti');
+    const ctx = canvas.getContext('2d');
+    let confetti;
+    function resizeConfetti() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    function pixelColor() {
+      const colors = ["#ffd667", "#ff8dc7", "#a6c1ee", "#ffec99", "#66e5b2", "#c883f2"];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+    function createConfetti() {
+      confetti = [];
+      for (let i = 0; i < 45; i++) {
+        confetti.push({
+          x: Math.floor(Math.random() * canvas.width/4)*4,
+          y: Math.floor(Math.random() * canvas.height/4)*4 - 20,
+          size: 8,
+          color: pixelColor(),
+          vy: 1 + Math.random() * 2,
+          vx: (Math.random() - 0.5) * 1,
+        });
+      }
+    }
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.strokeStyle = "#1b182f";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(p.x, p.y, p.size, p.size);
+      });
+    }
+    function updateConfetti() {
+      confetti.forEach(p => {
+        p.x += p.vx * 4;
+        p.y += p.vy * 3.4;
+        p.x = Math.round(p.x/4)*4;
+        p.y = Math.round(p.y/4)*4;
+        if (p.y > canvas.height) {
+          p.x = Math.floor(Math.random() * canvas.width/4)*4;
+          p.y = -12;
+        }
+      });
+    }
+    function animateConfetti() {
+      updateConfetti();
+      drawConfetti();
+      requestAnimationFrame(animateConfetti);
+    }
+    window.addEventListener('resize', () => { resizeConfetti(); createConfetti(); });
+    setTimeout(() => {
+      resizeConfetti();
+      createConfetti();
+      animateConfetti();
+    }, 210);
+
+  </script>
+</body>
+</html>
